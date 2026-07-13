@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站仅搜索首页
 // @namespace    https://github.com/mintonight/bilibili-search-only-home
-// @version      1.0.0
+// @version      1.0.1
 // @description  不依赖 Bilibili Evolved：B 站首页仅保留顶栏与居中搜索框，默认纯黑背景
 // @author       mintonight
 // @homepageURL  https://github.com/mintonight/bilibili-search-only-home
@@ -111,7 +111,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 12px;
 }
 
 #soh-form {
@@ -164,12 +163,6 @@ body {
   opacity: 0.9;
 }
 
-#soh-hint {
-  text-align: center;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
-  user-select: none;
-}
 `
 
   const applyBackgroundVars = () => {
@@ -256,14 +249,9 @@ body {
     submit.type = 'submit'
     submit.textContent = '搜索'
 
-    const hint = document.createElement('div')
-    hint.id = 'soh-hint'
-    hint.textContent = 'B站仅搜索首页 · 独立油猴脚本'
-
     form.appendChild(input)
     form.appendChild(submit)
     panel.appendChild(form)
-    panel.appendChild(hint)
     root.appendChild(panel)
 
     const attach = () => {
