@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         B站仅搜索首页
 // @namespace    https://github.com/mintonight/bilibili-search-only-home
-// @version      1.0.1
+// @version      1.0.2
 // @description  不依赖 Bilibili Evolved：B 站首页仅保留顶栏与居中搜索框，默认纯黑背景
 // @author       mintonight
 // @homepageURL  https://github.com/mintonight/bilibili-search-only-home
 // @supportURL   https://github.com/mintonight/bilibili-search-only-home/issues
 // @match        *://www.bilibili.com/
 // @match        *://www.bilibili.com/index.html
+// @icon         https://www.bilibili.com/favicon.ico
+// @icon64       https://www.bilibili.com/favicon.ico
 // @run-at       document-start
 // @grant        GM_addStyle
 // @grant        GM_getValue
