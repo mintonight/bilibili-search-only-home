@@ -1,8 +1,9 @@
-# b学 · bilistudy
+# b学
 
-**b学模式**（英文 **bilistudy**）：Bilibili 学习模式独立油猴脚本，**不依赖** [Bilibili Evolved](https://github.com/the1812/Bilibili-Evolved)。
+**b学模式**（**bilistudy**）：Bilibili 学习模式独立油猴脚本 。
 
 打开 B 站时减少信息流干扰，方便专心搜索与看视频。
+> 此处首页照片可自定义，默认照片的中指表示感谢的意思，没有恶意。详情可以去看gbc番剧了解。
 
 ![b学首页效果](assert/b学首页.png)
 
@@ -82,6 +83,10 @@ https://cdn.jsdelivr.net/gh/mintonight/bilistudy@v1.2.0/bilistudy.user.js
 
 - `bilistudy.user.js` — 脚本本体
 - `assert/b学首页.png` — 首页效果截图
+
+## 友链
+[Bilibili Evolved](https://github.com/the1812/Bilibili-Evolved)   
+[Linux do](https://linux.do)
 
 ## License
 
