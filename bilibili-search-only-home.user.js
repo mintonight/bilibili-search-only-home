@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站仅搜索首页
 // @namespace    https://github.com/mintonight/bilibili-search-only-home
-// @version      1.1.0
+// @version      1.1.1
 // @description  不依赖 Bilibili Evolved：首页仅保留顶栏与居中搜索；视频页可隐藏相关推荐并设置默认播放器模式
 // @author       mintonight
 // @homepageURL  https://github.com/mintonight/bilibili-search-only-home
@@ -40,7 +40,7 @@
     bgImage: '',
     hideRelated: true,
     /** normal | wide | web | full */
-    playerMode: 'normal',
+    playerMode: 'wide',
     applyOnPlay: false,
   }
 

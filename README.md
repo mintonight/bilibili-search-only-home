@@ -5,7 +5,7 @@
 - **首页**：只保留顶栏和居中搜索框，默认纯黑背景  
 - **视频页**：可隐藏右侧相关推荐，并可设置默认播放器模式（常规 / 宽屏 / 网页全屏 / 全屏）
 
-当前版本：**1.1.0**
+当前版本：**1.1.1**
 
 ## 安装
 
@@ -16,15 +16,15 @@
 
 https://raw.githubusercontent.com/mintonight/bilibili-search-only-home/main/bilibili-search-only-home.user.js
 
-### 备选：jsDelivr 固定版本标签（当前 v1.1.0）
+### 备选：jsDelivr 固定版本标签（当前 v1.1.1）
 
-https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.0/bilibili-search-only-home.user.js
+https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.1/bilibili-search-only-home.user.js
 
 > **为什么 README 里 jsDelivr 的 `@main` 链接可能还是旧版？**  
 > jsDelivr 会对 GitHub 分支做较长时间缓存。用 `@main` 时，有时推送新版本后仍会返回旧脚本（例如还显示 1.0.0 / 1.0.1）。  
 > 解决办法：
 > 1. 用上面的 **GitHub Raw** 安装 / 更新  
-> 2. 或用 **带版本标签** 的 jsDelivr 链接（如 `@v1.1.0`），发版时再改标签  
+> 2. 或用 **带版本标签** 的 jsDelivr 链接（如 `@v1.1.1`），发版时再改标签  
 
 3. 打开 https://www.bilibili.com/ 或任意视频页即可  
 
@@ -56,7 +56,7 @@ https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.0/bilibili
 
 > 若要操作 B 站「自动连播」开关，请先在菜单里关闭「隐藏视频推荐」，开关一般在相关推荐区域附近。
 
-#### 默认播放器模式（默认：常规）
+#### 默认播放器模式（默认：宽屏）
 
 可选：`常规` / `宽屏` / `网页全屏` / `全屏`。
 
