@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         B站仅搜索首页
 // @namespace    https://github.com/mintonight/bilibili-search-only-home
-// @version      1.1.2
+// @version      1.1.3
 // @description  不依赖 Bilibili Evolved：首页仅保留顶栏与居中搜索（默认自定义背景图）；视频页可隐藏相关推荐并设置默认宽屏
 // @author       mintonight
 // @homepageURL  https://github.com/mintonight/bilibili-search-only-home
@@ -406,26 +406,29 @@ body {
   // ---------------------------------------------------------------------------
   // 视频页：默认播放器模式
   // 来源：Bilibili Evolved defaultPlayerMode —— 等待控制栏按钮后模拟点击
+  // bpx 真实状态在 .bpx-player-container[data-screen=normal|wide|web|full]
   // ---------------------------------------------------------------------------
 
   const PLAYER_BUTTONS = {
-    // bpx（当前主站播放器）
     wide: ['.bpx-player-ctrl-wide', '.bilibili-player-video-btn-widescreen'],
     web: ['.bpx-player-ctrl-web', '.bilibili-player-video-web-fullscreen'],
     full: ['.bpx-player-ctrl-full', '.bilibili-player-video-btn-fullscreen'],
   }
 
+  /** 脚本 mode → bpx data-screen */
+  const MODE_TO_SCREEN = {
+    normal: 'normal',
+    wide: 'wide',
+    web: 'web',
+    full: 'full',
+  }
+
   const VIDEO_SELECTORS = [
     '.bpx-player-video-wrap video',
     '.bilibili-player-video video',
+    'bwp-video',
     'video',
   ]
-
-  const MODE_CLASS_HINTS = {
-    wide: ['mode-widescreen', 'player-mode-widescreen', 'bpx-state-wide'],
-    web: ['mode-webscreen', 'player-mode-webfullscreen', 'bpx-state-web'],
-    full: ['mode-fullscreen', 'player-mode-fullscreen'],
-  }
 
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -477,13 +480,75 @@ body {
     return false
   }
 
+  /**
+   * 读取当前播放器模式。优先 bpx data-screen（Evolved polyfill 同源），
+   * 再回退 body class / 按钮高亮，避免误判导致二次点击把宽屏关掉。
+   */
+  const getCurrentScreenMode = () => {
+    const container = document.querySelector('.bpx-player-container')
+    if (container) {
+      const screen = container.getAttribute('data-screen')
+      if (screen === 'wide' || screen === 'web' || screen === 'full' || screen === 'mini') {
+        return screen
+      }
+      if (screen === 'normal' || screen === '' || screen == null) {
+        // 继续用按钮状态兜底：data-screen 有时初始化稍晚
+      }
+    }
+
+    const body = document.body
+    if (body) {
+      if (
+        body.classList.contains('player-mode-web') ||
+        body.classList.contains('player-full-win') ||
+        body.classList.contains('mode-webscreen')
+      ) {
+        return 'web'
+      }
+      if (
+        body.classList.contains('player-mode-full') ||
+        body.classList.contains('player-fullscreen-fix') ||
+        body.classList.contains('mode-fullscreen')
+      ) {
+        return 'full'
+      }
+      if (
+        body.classList.contains('player-mode-wide') ||
+        body.classList.contains('player-mode-widescreen') ||
+        body.classList.contains('mode-widescreen')
+      ) {
+        return 'wide'
+      }
+    }
+
+    const isActiveBtn = el =>
+      !!el &&
+      (el.classList.contains('bpx-state-entered') ||
+        el.classList.contains('active') ||
+        el.getAttribute('data-active') === 'true' ||
+        el.getAttribute('aria-checked') === 'true')
+
+    if (isActiveBtn(queryFirst(PLAYER_BUTTONS.web))) {
+      return 'web'
+    }
+    if (isActiveBtn(queryFirst(PLAYER_BUTTONS.full))) {
+      return 'full'
+    }
+    if (isActiveBtn(queryFirst(PLAYER_BUTTONS.wide))) {
+      return 'wide'
+    }
+
+    if (container && container.getAttribute('data-screen') === 'normal') {
+      return 'normal'
+    }
+    return 'normal'
+  }
+
   const isModeAlreadyApplied = mode => {
     if (mode === 'normal') {
-      return true
+      return getCurrentScreenMode() === 'normal'
     }
-    const hints = MODE_CLASS_HINTS[mode] || []
-    const roots = [document.body, document.documentElement, document.querySelector('#bilibili-player'), document.querySelector('.bpx-player-container')].filter(Boolean)
-    return roots.some(root => hints.some(cls => root.classList.contains(cls)))
+    return getCurrentScreenMode() === MODE_TO_SCREEN[mode]
   }
 
   /**
@@ -496,13 +561,16 @@ body {
     try {
       await action()
     } finally {
-      // 给播放器一点时间完成布局再恢复
-      await sleep(50)
+      await sleep(80)
       window.scrollTo = original
     }
   }
 
-  const clickPlayerButton = async mode => {
+  /**
+   * 仅在当前不是目标模式时点击一次按钮。
+   * 禁止“检测失败就再点一次”——宽屏按钮是 toggle，二次点击会退回常规。
+   */
+  const clickPlayerButtonOnce = async mode => {
     if (mode === 'normal') {
       return true
     }
@@ -521,6 +589,14 @@ body {
       return false
     }
 
+    // 按钮自身已处于按下态时不要再点
+    if (
+      button.classList.contains('bpx-state-entered') ||
+      button.classList.contains('active')
+    ) {
+      return true
+    }
+
     const doClick = () => {
       button.click()
     }
@@ -528,11 +604,10 @@ body {
     if (mode === 'wide') {
       await withScrollBlocked(doClick)
     } else if (mode === 'full') {
-      // 全屏通常需要页面已聚焦；尽量等 video 可播放
       const video = await waitFor(
         () => {
           const v = queryFirst(VIDEO_SELECTORS)
-          if (v && v.readyState >= 2 && document.readyState === 'complete') {
+          if (v && (v.readyState >= 2 || v.tagName === 'BWP-VIDEO') && document.readyState === 'complete') {
             return v
           }
           return null
@@ -554,16 +629,88 @@ body {
       doClick()
     }
 
-    // 给 class 切换一点时间，失败则再点一次（部分版本首次点击只是展开面板）
-    await sleep(300)
-    if (!isModeAlreadyApplied(mode) && mode !== 'full') {
-      doClick()
-      await sleep(200)
-    }
-    return true
+    // 只等待确认，不再盲目二次点击
+    await sleep(400)
+    return isModeAlreadyApplied(mode)
   }
 
   let playerModeToken = 0
+  let modeGuardObserver = null
+  let modeGuardTimer = null
+  let lastModeClickAt = 0
+
+  const stopModeGuard = () => {
+    if (modeGuardObserver) {
+      modeGuardObserver.disconnect()
+      modeGuardObserver = null
+    }
+    if (modeGuardTimer) {
+      clearTimeout(modeGuardTimer)
+      modeGuardTimer = null
+    }
+  }
+
+  /**
+   * 播放器初始化后期可能把 data-screen 刷回 normal。
+   * 在短窗口内若目标模式被打回，再确保一次（带冷却，避免 toggle 抖动）。
+   */
+  const startModeGuard = (mode, token) => {
+    stopModeGuard()
+    if (mode === 'normal') {
+      return
+    }
+
+    const target = MODE_TO_SCREEN[mode]
+    const guardUntil = Date.now() + 12000
+    let reapplyCount = 0
+
+    const tryFix = async () => {
+      if (token !== playerModeToken) {
+        return
+      }
+      if (Date.now() > guardUntil || reapplyCount >= 3) {
+        stopModeGuard()
+        return
+      }
+      if (isModeAlreadyApplied(mode)) {
+        return
+      }
+      // 冷却：避免和刚完成的点击叠在一起
+      if (Date.now() - lastModeClickAt < 600) {
+        return
+      }
+      reapplyCount += 1
+      lastModeClickAt = Date.now()
+      await clickPlayerButtonOnce(mode)
+    }
+
+    const container = document.querySelector('.bpx-player-container')
+    if (container && typeof MutationObserver !== 'undefined') {
+      modeGuardObserver = new MutationObserver(() => {
+        const screen = container.getAttribute('data-screen')
+        if (screen && screen !== target && screen !== 'mini') {
+          tryFix()
+        }
+      })
+      modeGuardObserver.observe(container, {
+        attributes: true,
+        attributeFilter: ['data-screen', 'class'],
+      })
+    }
+
+    // 定时兜底（部分场景 data-screen 不触发或节点被替换）
+    const poll = async () => {
+      if (token !== playerModeToken || Date.now() > guardUntil) {
+        stopModeGuard()
+        return
+      }
+      if (!isModeAlreadyApplied(mode)) {
+        await tryFix()
+      }
+      modeGuardTimer = setTimeout(poll, 800)
+    }
+    modeGuardTimer = setTimeout(poll, 800)
+  }
 
   const applyPlayerMode = async () => {
     if (isEmbeddedPlayer()) {
@@ -572,6 +719,7 @@ body {
 
     const mode = getPlayerMode()
     if (mode === 'normal') {
+      stopModeGuard()
       return
     }
 
@@ -582,17 +730,50 @@ body {
       return
     }
 
-    const run = () => {
+    // 等控制栏/容器出现，减少“点太早被播放器初始化冲掉”
+    await waitFor(
+      () =>
+        document.querySelector('.bpx-player-container') ||
+        queryFirst(PLAYER_BUTTONS.wide) ||
+        queryFirst(PLAYER_BUTTONS.web),
+      { timeout: 12000, interval: 150 },
+    )
+    if (token !== playerModeToken) {
+      return
+    }
+
+    const run = async () => {
       if (token !== playerModeToken) {
         return
       }
-      clickPlayerButton(mode)
+      if (isModeAlreadyApplied(mode)) {
+        startModeGuard(mode, token)
+        return
+      }
+      lastModeClickAt = Date.now()
+      await clickPlayerButtonOnce(mode)
+      if (token !== playerModeToken) {
+        return
+      }
+      // 若首次被初始化冲掉，稍后只再尝试有限次（每次仍先检查是否已宽屏）
+      for (let i = 0; i < 2 && token === playerModeToken; i += 1) {
+        if (isModeAlreadyApplied(mode)) {
+          break
+        }
+        await sleep(700)
+        if (token !== playerModeToken || isModeAlreadyApplied(mode)) {
+          break
+        }
+        lastModeClickAt = Date.now()
+        await clickPlayerButtonOnce(mode)
+      }
+      startModeGuard(mode, token)
     }
 
     // 对齐 Evolved：开启「播放时应用」且未自动播放时，等到 play 再切换
     if (getApplyOnPlay() && !isAutoPlay()) {
       if (!video.paused && !video.ended) {
-        run()
+        await run()
       } else {
         const onPlay = () => {
           video.removeEventListener('play', onPlay)
@@ -603,7 +784,7 @@ body {
       return
     }
 
-    run()
+    await run()
   }
 
   /** 监听 SPA / 切 P 后的路径变化，重新应用播放器模式 */
@@ -619,10 +800,11 @@ body {
         return
       }
       lastKey = key
+      stopModeGuard()
       // 等新播放器挂载
       setTimeout(() => {
         applyPlayerMode()
-      }, 400)
+      }, 500)
     }
 
     const wrapHistory = method => {
