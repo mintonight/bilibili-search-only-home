@@ -1,11 +1,13 @@
 // ==UserScript==
-// @name         B站仅搜索首页
-// @namespace    https://github.com/mintonight/bilibili-search-only-home
-// @version      1.1.3
-// @description  不依赖 Bilibili Evolved：首页仅保留顶栏与居中搜索（默认自定义背景图）；视频页可隐藏相关推荐并设置默认宽屏
+// @name         b学
+// @namespace    https://github.com/mintonight/bilistudy
+// @version      1.2.0
+// @description  bilistudy / b学模式：B 站学习模式。首页仅保留顶栏与居中搜索；视频页隐藏相关推荐并默认宽屏。不依赖 Bilibili Evolved
 // @author       mintonight
-// @homepageURL  https://github.com/mintonight/bilibili-search-only-home
-// @supportURL   https://github.com/mintonight/bilibili-search-only-home/issues
+// @homepageURL  https://github.com/mintonight/bilistudy
+// @supportURL   https://github.com/mintonight/bilistudy/issues
+// @downloadURL  https://raw.githubusercontent.com/mintonight/bilistudy/main/bilistudy.user.js
+// @updateURL    https://raw.githubusercontent.com/mintonight/bilistudy/main/bilistudy.user.js
 // @match        *://www.bilibili.com/
 // @match        *://www.bilibili.com/index.html
 // @match        *://www.bilibili.com/video/*
@@ -585,7 +587,7 @@ body {
 
     const button = await waitFor(() => queryFirst(selectors), { timeout: 12000, interval: 150 })
     if (!button) {
-      console.warn('[B站仅搜索首页] 未找到播放器模式按钮:', mode)
+      console.warn('[b学/bilistudy] 未找到播放器模式按钮:', mode)
       return false
     }
 
@@ -615,7 +617,7 @@ body {
         { timeout: 10000, interval: 200 },
       )
       if (!video) {
-        console.warn('[B站仅搜索首页] 全屏模式等待视频就绪超时')
+        console.warn('[b学/bilistudy] 全屏模式等待视频就绪超时')
       }
       if (!document.hasFocus()) {
         try {
