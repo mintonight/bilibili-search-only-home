@@ -2,10 +2,10 @@
 
 独立 **Tampermonkey / Violentmonkey** 脚本，**不依赖** [Bilibili Evolved](https://github.com/the1812/Bilibili-Evolved)。
 
-- **首页**：只保留顶栏和居中搜索框，默认纯黑背景  
+- **首页**：只保留顶栏和居中搜索框，默认自定义背景图   
 - **视频页**：可隐藏右侧相关推荐，并可设置默认播放器模式（常规 / 宽屏 / 网页全屏 / 全屏）
 
-当前版本：**1.1.1**
+当前版本：**1.1.2**
 
 ## 安装
 
@@ -16,15 +16,15 @@
 
 https://raw.githubusercontent.com/mintonight/bilibili-search-only-home/main/bilibili-search-only-home.user.js
 
-### 备选：jsDelivr 固定版本标签（当前 v1.1.1）
+### 备选：jsDelivr 固定版本标签（当前 v1.1.2）
 
-https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.1/bilibili-search-only-home.user.js
+https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.2/bilibili-search-only-home.user.js
 
 > **为什么 README 里 jsDelivr 的 `@main` 链接可能还是旧版？**  
 > jsDelivr 会对 GitHub 分支做较长时间缓存。用 `@main` 时，有时推送新版本后仍会返回旧脚本（例如还显示 1.0.0 / 1.0.1）。  
 > 解决办法：
 > 1. 用上面的 **GitHub Raw** 安装 / 更新  
-> 2. 或用 **带版本标签** 的 jsDelivr 链接（如 `@v1.1.1`），发版时再改标签  
+> 2. 或用 **带版本标签** 的 jsDelivr 链接（如 `@v1.1.2`），发版时再改标签  
 
 3. 打开 https://www.bilibili.com/ 或任意视频页即可  
 
@@ -37,7 +37,7 @@ https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.1/bilibili
 - 隐藏推荐流、频道栏、横幅装饰
 - 保留顶栏（消息、头像等）
 - 页面中央搜索框
-- 默认纯黑背景
+- 默认自定义背景图（可改色/换图）
 - 支持关键词搜索
 - 输入 `BV…` / `av…` / 纯数字可尝试直达视频
 - 油猴列表显示 B 站图标
@@ -74,7 +74,7 @@ https://cdn.jsdelivr.net/gh/mintonight/bilibili-search-only-home@v1.1.1/bilibili
 |----------|------|
 | 设置背景颜色 | 首页背景色，如 `#000000` |
 | 设置背景图片 URL | 首页背景图 `https://...`，留空清除 |
-| 恢复默认背景 | 恢复纯黑 |
+| 恢复默认背景 | 恢复默认背景色与默认背景图 |
 | 隐藏视频推荐 | 开/关，视频页即时生效；首页菜单改完后进视频页生效 |
 | 默认播放器模式 | 在 常规→宽屏→网页全屏→全屏 间循环切换 |
 | 播放时再应用模式 | 仅视频页菜单；是否等播放后再切模式 |

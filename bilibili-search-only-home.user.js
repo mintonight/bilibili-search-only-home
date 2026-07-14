@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         B站仅搜索首页
 // @namespace    https://github.com/mintonight/bilibili-search-only-home
-// @version      1.1.1
-// @description  不依赖 Bilibili Evolved：首页仅保留顶栏与居中搜索；视频页可隐藏相关推荐并设置默认播放器模式
+// @version      1.1.2
+// @description  不依赖 Bilibili Evolved：首页仅保留顶栏与居中搜索（默认自定义背景图）；视频页可隐藏相关推荐并设置默认宽屏
 // @author       mintonight
 // @homepageURL  https://github.com/mintonight/bilibili-search-only-home
 // @supportURL   https://github.com/mintonight/bilibili-search-only-home/issues
@@ -37,7 +37,8 @@
 
   const DEFAULTS = {
     bgColor: '#000000',
-    bgImage: '',
+    bgImage:
+      'https://i1.hdslb.com/bfs/archive/1442a56890d91c3e2fec8a5ae4e4d9a66b67230f.jpg',
     hideRelated: true,
     /** normal | wide | web | full */
     playerMode: 'wide',
@@ -682,7 +683,7 @@ body {
         applyBackgroundVars()
       })
 
-      GM_registerMenuCommand('恢复默认背景（纯黑）', () => {
+      GM_registerMenuCommand('恢复默认背景', () => {
         GM_setValue(STORAGE.bgColor, DEFAULTS.bgColor)
         GM_setValue(STORAGE.bgImage, DEFAULTS.bgImage)
         applyBackgroundVars()
