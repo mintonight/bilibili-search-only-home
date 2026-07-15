@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         b学
 // @namespace    https://github.com/mintonight/bilistudy
-// @version      1.2.0
+// @version      1.2.1
 // @description  bilistudy / b学模式：B 站学习模式。首页仅保留顶栏与居中搜索；视频页隐藏相关推荐并默认宽屏。不依赖 Bilibili Evolved
 // @author       mintonight
 // @homepageURL  https://github.com/mintonight/bilistudy
