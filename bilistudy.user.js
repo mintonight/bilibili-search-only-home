@@ -654,7 +654,7 @@ body {
 
   /**
    * 播放器初始化后期可能把 data-screen 刷回 normal。
-   * 在短窗口内若目标模式被打回，再确保一次（带冷却，避免 toggle 抖动）。
+   * 在 3 秒窗口内若目标模式被打回，最多再确保一次（带冷却，避免 toggle 抖动）。
    */
   const startModeGuard = (mode, token) => {
     stopModeGuard()
@@ -663,14 +663,14 @@ body {
     }
 
     const target = MODE_TO_SCREEN[mode]
-    const guardUntil = Date.now() + 12000
+    const guardUntil = Date.now() + 3000
     let reapplyCount = 0
 
     const tryFix = async () => {
       if (token !== playerModeToken) {
         return
       }
-      if (Date.now() > guardUntil || reapplyCount >= 3) {
+      if (Date.now() > guardUntil || reapplyCount >= 1) {
         stopModeGuard()
         return
       }
