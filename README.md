@@ -10,7 +10,6 @@
 - **首页**：只保留顶栏和居中搜索框，默认自定义背景图
 - **视频页**：可隐藏右侧相关推荐，并可设置默认播放器模式（常规 / 宽屏 / 网页全屏 / 全屏）
 
-当前版本：**1.2.1**
 
 ## 安装
 
@@ -21,9 +20,9 @@
 
 https://raw.githubusercontent.com/mintonight/bilistudy/main/bilistudy.user.js
 
-### 备选：jsDelivr 固定版本标签（当前 v1.2.1）
+### 备选：jsDelivr 固定版本标签（更新可能稍慢）
 
-https://cdn.jsdelivr.net/gh/mintonight/bilistudy@v1.2.1/bilistudy.user.js
+https://cdn.jsdelivr.net/gh/mintonight/bilistudy/bilistudy.user.js
 
 > **jsDelivr `@main` 可能缓存旧版**  
 > 优先用 GitHub Raw 安装 / 更新，或使用带版本标签的 jsDelivr 链接。
